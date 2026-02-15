@@ -17,12 +17,13 @@ class SequenceDetector:
     Emits jutsu detection events when complete sequences are recognized.
     """
     
-    def __init__(self, jutsus_file: str = None):
+    def __init__(self, jutsus_file: str = None, effects_engine = None):
         """
         Initialize the sequence detector.
         
         Args:
             jutsus_file: Path to jutsus.json configuration file
+            effects_engine: Optional EffectsEngine instance for playing gesture sounds
         """
         if jutsus_file is None:
             # Default to naruto_jutsu/jutsus.json
@@ -32,6 +33,9 @@ class SequenceDetector:
         self.jutsus = []
         self.settings = {}
         self.load_jutsus()
+        
+        # Effects engine for gesture sounds
+        self.effects_engine = effects_engine
         
         # FSM state
         self.current_sequence = []  # List of (gesture, timestamp) tuples
@@ -44,6 +48,8 @@ class SequenceDetector:
         self.active_jutsu = None  # Currently being tracked
         self.detected_jutsu = None  # Last completed jutsu
         self.detection_time = None
+        self.last_gesture_sound_time = None  # Track when gesture sound was last played
+        self.last_jutsu_detection_time = None  # Track when jutsu was last detected (for cooldown)
         
         # Targeted mode: track only specific jutsu
         self.target_jutsu = None  # If set, only detect this jutsu
@@ -165,6 +171,17 @@ class SequenceDetector:
         self.current_sequence.append((gesture, current_time))
         print(f"[SEQ] Added: {gesture} (confidence: {confidence:.2f}, sequence: {[g for g, _ in self.current_sequence]})")
         
+        # Play gesture sound on recognition with debounce (only once per 0.3 seconds)
+        # and NOT within 1 second after jutsu detection (prevent spam when holding last gesture)
+        if self.effects_engine:
+            time_since_jutsu = current_time - self.last_jutsu_detection_time if self.last_jutsu_detection_time else float('inf')
+            # Prevent sound for 1 second after jutsu detection
+            if time_since_jutsu > 1.0:
+                # Prevent sound spam - minimum 0.3 second gap
+                if self.last_gesture_sound_time is None or (current_time - self.last_gesture_sound_time) > 0.3:
+                    self.effects_engine.play_gesture_sound("jutsu.wav", volume=0.6)
+                    self.last_gesture_sound_time = current_time
+        
         # Check for matching jutsus
         matched_jutsu = self._check_sequence()
         
@@ -172,6 +189,7 @@ class SequenceDetector:
             # Complete sequence detected!
             self.detected_jutsu = matched_jutsu
             self.detection_time = current_time
+            self.last_jutsu_detection_time = current_time  # Track jutsu detection for sound cooldown
             print(f"[JUTSU DETECTED] {matched_jutsu['name']} ({matched_jutsu['japanese']})")
             
             # Reset for next sequence

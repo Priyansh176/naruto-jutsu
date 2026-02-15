@@ -16,6 +16,7 @@ from hand_tracker import HandTracker, HandResult, FingerState
 from feature_extractor import FeatureExtractor
 from gesture_classifier import GestureClassifier
 from sequence_detector import SequenceDetector
+from effects_engine import EffectsEngine
 
 
 def load_gesture_images(images_dir: Path) -> dict:
@@ -240,37 +241,37 @@ def draw_ui_overlay(frame, hand_results: list, fps: float, mode: str = "phase1",
                 draw_sequence_images(frame, sequence, current_idx, gesture_images, 
                                     completed, y_position=50)
         
-        # Display jutsu detection (if any)
+        # Display jutsu detection at BOTTOM (if any)
         if jutsu_detected:
-            # Large jutsu name with effects
+            # Large jutsu name with effects at bottom (not covering the view)
             jutsu_text = jutsu_detected['name']
             japanese_text = jutsu_detected['japanese']
             
-            text_size = cv2.getTextSize(jutsu_text, cv2.FONT_HERSHEY_SIMPLEX, 1.8, 3)[0]
+            text_size = cv2.getTextSize(jutsu_text, cv2.FONT_HERSHEY_SIMPLEX, 1.6, 3)[0]
             text_x = (w - text_size[0]) // 2
-            text_y = h // 2
+            text_y = h - 90  # Bottom of screen, above controls
             
             # Background rectangle with jutsu color
-            padding = 30
+            padding = 20
             color = tuple(reversed(jutsu_detected['effects']['color']))  # BGR format
             cv2.rectangle(frame, 
                           (text_x - padding, text_y - text_size[1] - padding),
-                          (text_x + text_size[0] + padding, text_y + padding + 40),
+                          (text_x + text_size[0] + padding, text_y + padding + 30),
                           color, -1)
             cv2.rectangle(frame,
                           (text_x - padding, text_y - text_size[1] - padding),
-                          (text_x + text_size[0] + padding, text_y + padding + 40),
+                          (text_x + text_size[0] + padding, text_y + padding + 30),
                           (255, 255, 255), 3)
             
             # Jutsu name
             cv2.putText(frame, jutsu_text, (text_x, text_y), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.8, (255, 255, 255), 3)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.6, (255, 255, 255), 3)
             
             # Japanese name below
-            jp_size = cv2.getTextSize(japanese_text, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)[0]
+            jp_size = cv2.getTextSize(japanese_text, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
             jp_x = (w - jp_size[0]) // 2
-            cv2.putText(frame, japanese_text, (jp_x, text_y + 35), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+            cv2.putText(frame, japanese_text, (jp_x, text_y + 30), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
         
         # Display time and confidence in bottom left
         if sequence_info and sequence_info.get('active'):
@@ -348,13 +349,19 @@ def run_hand_tracking(camera_id: int = 0, start_mode: str = "phase3",
     tracker = HandTracker(max_num_hands=2)  # TWO hands for gesture recognition
     feature_extractor = FeatureExtractor()
     classifier = GestureClassifier()
-    sequence_detector = SequenceDetector()  # Phase 3: Sequence detection
+    effects_engine = EffectsEngine()  # Phase 4: Sound and visual effects
+    sequence_detector = SequenceDetector(effects_engine=effects_engine)  # Phase 3: Sequence detection with sound
     
     # Load gesture images
     images_dir = Path(__file__).resolve().parent.parent / "images"
     gesture_images = load_gesture_images(images_dir)
     
     current_mode = start_mode
+    
+    # Track jutsu display duration
+    jutsu_detected_time = None
+    jutsu_display_duration = 10.0  # Display jutsu name for 10 seconds at bottom
+    jutsu_detected = None  # Initialize jutsu display state
     
     # Create named window
     window_name = "Naruto Jutsu Recognition System"
@@ -420,10 +427,16 @@ def run_hand_tracking(camera_id: int = 0, start_mode: str = "phase3",
             tracker.draw_landmarks(frame, hand_results)
             fps = tracker.update_fps()
             
+            # Check if jutsu display duration has expired (Phase 3 only)
+            if current_mode == "phase3" and jutsu_detected and jutsu_detected_time:
+                elapsed = time.time() - jutsu_detected_time
+                if elapsed > jutsu_display_duration:
+                    jutsu_detected = None  # Clear jutsu display after 10 seconds
+            
             # Gesture recognition (Phase 2 and Phase 3)
             gesture_info = None
             sequence_info = None
-            jutsu_detected = None
+            detected = None  # New jutsu detection this frame
             
             if current_mode in ["phase2", "phase3"] and hand_results and classifier.is_loaded():
                 try:
@@ -455,15 +468,35 @@ def run_hand_tracking(camera_id: int = 0, start_mode: str = "phase3",
                         detected = sequence_detector.update(gesture, confidence)
                         
                         if detected:
-                            # Jutsu completed!
+                            # Jutsu completed! Update display
                             jutsu_detected = detected
+                            jutsu_detected_time = time.time()  # Track when jutsu was detected
                             print(f"\n🔥 JUTSU DETECTED: {detected['name']} ({detected['japanese']}) 🔥\n")
+                            
+                            # Trigger effects (Phase 4)
+                            effects_engine.trigger_jutsu_effects(detected)
                         
                         # Get sequence progress for display
                         sequence_info = sequence_detector.get_current_progress()
                 
                 except Exception as e:
                     print(f"Recognition error: {e}")
+            
+            # Apply active visual effects (Phase 4)
+            if current_mode == "phase3":
+                # Get center position for particle effects (use screen center or hand position)
+                center = None
+                if hand_results:
+                    # Use first detected hand as center
+                    first_hand = hand_results[0].landmarks
+                    if first_hand:
+                        # Use wrist position (landmark 0) - landmarks are tuples (x, y, z)
+                        wrist = first_hand[0]
+                        cx = int(wrist[0] * window_width)
+                        cy = int(wrist[1] * window_height)
+                        center = (cx, cy)
+                
+                frame = effects_engine.draw_active_effects(frame, center)
             
             # Draw UI
             draw_ui_overlay(frame, hand_results, fps, current_mode, gesture_info, 
@@ -518,6 +551,7 @@ def run_hand_tracking(camera_id: int = 0, start_mode: str = "phase3",
         cap.release()
         cv2.destroyAllWindows()
         tracker.close()
+        effects_engine.cleanup()  # Clean up sound system
         print("\nSession ended.")
 
 

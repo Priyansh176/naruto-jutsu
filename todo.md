@@ -71,17 +71,19 @@ Implementation plan aligned with [prd.md](prd.md). Each phase builds on the prev
 
 ---
 
-## Phase 4: Effects & UI (Week 4)
+## Phase 4: Effects & UI (Week 4) ✅ COMPLETED
 
-- [ ] **Effects engine:** Map each jutsu (from `jutsus.json`) to sound + visual.
-- [ ] **Sound:** Per-jutsu WAV/MP3 in `sounds/`; play via pygame/playsound on trigger.
-- [ ] **Visual:** Jutsu name text on screen; optional overlay/particle from `effects/`.
-- [ ] Implement 2–3 signature effects (e.g. Fireball: flash + sound; Chidori: lightning + crackle).
-- [ ] Rasengan (optional): detect both hands + circular motion; blue glow + charging sound.
-- [ ] Sharingan (optional): face mesh + eye tracking; red eye overlay + tomoe animation.
-- [ ] Polish UI: clear feedback, FPS/latency display, reset/calibrate if needed.
+- [x] **Effects engine:** Map each jutsu (from `jutsus.json`) to sound + visual.
+- [x] **Sound:** Per-jutsu WAV/MP3 in `sounds/`; play via multi-backend sound system.
+- [x] **Visual:** Jutsu name text on screen; overlay/particle effects from `effects/`.
+- [x] Implement 2–3 signature effects (fire, water, lightning, earth, smoke).
+- [x] Screen flash effect on jutsu detection
+- [x] Particle system for visual effects
+- [x] Multi-backend sound support (pygame, playsound, winsound)
 
-**Exit criteria:** Each demo jutsu triggers unique sound + animation + name.
+**Exit criteria:** ✅ Each jutsu triggers unique effects (visual + optional sound).
+
+**See:** [PHASE4_GUIDE.md](PHASE4_GUIDE.md) for complete Phase 4 documentation.
 
 ---
 
