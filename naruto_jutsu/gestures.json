@@ -1,0 +1,76 @@
+{
+  "gestures": [
+    {
+      "id": 1,
+      "name": "Tiger",
+      "description": "Index and middle fingers extended, crossed in front",
+      "image": "tiger.png"
+    },
+    {
+      "id": 2,
+      "name": "Ram",
+      "description": "Index and middle fingers extended upward, others closed",
+      "image": "ram.png"
+    },
+    {
+      "id": 3,
+      "name": "Snake",
+      "description": "Hands interlocked with fingers extended",
+      "image": "snake.png"
+    },
+    {
+      "id": 4,
+      "name": "Dragon",
+      "description": "Hands overlapped with fingers spread",
+      "image": "dragon.png"
+    },
+    {
+      "id": 5,
+      "name": "Boar",
+      "description": "All fingers extended and spread",
+      "image": "boar.png"
+    },
+    {
+      "id": 6,
+      "name": "Dog",
+      "description": "All fingers closed except pinky and thumb",
+      "image": "dog.png"
+    },
+    {
+      "id": 7,
+      "name": "Monkey",
+      "description": "Index and pinky extended, others closed",
+      "image": "monkey.png"
+    },
+    {
+      "id": 8,
+      "name": "Rabbit",
+      "description": "Index and middle extended upward, thumb up",
+      "image": "rabbit.png"
+    },
+    {
+      "id": 9,
+      "name": "Ox",
+      "description": "Index finger pointing upward, others closed",
+      "image": "ox.png"
+    },
+    {
+      "id": 10,
+      "name": "Bird",
+      "description": "Thumb and index forming circle, others extended",
+      "image": "bird.png"
+    },
+    {
+      "id": 11,
+      "name": "Horse",
+      "description": "Index and pinky raised, middle and ring bent",
+      "image": "horse.png"
+    },
+    {
+      "id": 12,
+      "name": "Rat",
+      "description": "Hands together, fingers interlocked",
+      "image": "rat.png"
+    }
+  ]
+}

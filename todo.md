@@ -35,18 +35,23 @@ Implementation plan aligned with [prd.md](prd.md). Each phase builds on the prev
 
 ---
 
-## Phase 2: Single Gesture Detection (Week 2)
+## Phase 2: Single Gesture Detection (Week 2) ✅ UPDATED FOR TWO HANDS
 
-- [ ] Define 10 Naruto signs: Tiger, Ram, Snake, Dragon, Boar, Dog, Monkey, Rabbit, Ox, Bird.
-- [ ] Design feature set from landmarks (angles, distances, finger states).
-- [ ] Build data capture tool: record landmarks per frame, save to CSV with gesture label.
-- [ ] Collect ≥ 200 samples per gesture; split train/validation.
-- [ ] Train classifier (e.g. Random Forest / small MLP) on landmark features.
-- [ ] Save model to `models/`; load in main pipeline.
-- [ ] In main app: run hand tracking → feature extraction → predict gesture; display label.
-- [ ] Tune for ≥ 90% accuracy in good lighting; log latency (target < 300 ms).
+- [x] Define 12 Naruto signs: Tiger, Ram, Snake, Dragon, Boar, Dog, Monkey, Rabbit, Ox, Bird, Horse, Rat.
+- [x] Design feature set from landmarks (angles, distances, finger states) - **72 features for 2 hands**
+- [x] Build data capture tool: record landmarks per frame, save to CSV with gesture label - **with reference images**
+- [x] Collect ≥ 200 samples per gesture; split train/validation - **12 gestures × 200 = 2400+ samples**
+- [x] Train classifier (e.g. Random Forest / small MLP) on landmark features.
+- [x] Save model to `models/`; load in main pipeline.
+- [x] In main app: run hand tracking → feature extraction → predict gesture; display label.
+- [x] Tune for ≥ 90% accuracy in good lighting; log latency (target < 300 ms).
+- [x] **NEW: Two-hand support with 72-feature extraction**
+- [x] **NEW: Reference image overlays in capture tool**
+- [x] **NEW: Larger window size (1280x720)**
 
-**Exit criteria:** Real-time single-gesture recognition with displayed label.
+**Exit criteria:** Real-time two-hand gesture recognition with displayed label for 12 signs.
+
+**See:** [PHASE2_UPDATES.md](PHASE2_UPDATES.md) for complete details on two-hand system.
 
 ---
 
