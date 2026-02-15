@@ -8,10 +8,12 @@ import sys
 import numpy as np
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root to path for package imports
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-from feature_extractor import FeatureExtractor
+from naruto_jutsu.src.feature_extractor import FeatureExtractor
 
 
 class TestFeatureExtractor(unittest.TestCase):

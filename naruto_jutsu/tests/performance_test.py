@@ -13,12 +13,14 @@ import sys
 from pathlib import Path
 import numpy as np
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root to path for package imports
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-from hand_tracker import HandTracker
-from feature_extractor import FeatureExtractor
-from gesture_classifier import GestureClassifier
+from naruto_jutsu.src.hand_tracker import HandTracker
+from naruto_jutsu.src.feature_extractor import FeatureExtractor
+from naruto_jutsu.src.gesture_classifier import GestureClassifier
 
 
 class PerformanceValidator:

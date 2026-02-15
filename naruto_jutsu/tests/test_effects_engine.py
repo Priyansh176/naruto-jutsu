@@ -9,10 +9,12 @@ import numpy as np
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root to path for package imports
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-from effects_engine import EffectsEngine
+from naruto_jutsu.src.effects_engine import EffectsEngine
 
 
 class TestEffectsEngine(unittest.TestCase):
