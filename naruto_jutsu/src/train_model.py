@@ -14,6 +14,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import json
+import warnings
+
+# Suppress sklearn parallel processing warning (benign)
+warnings.filterwarnings('ignore', message='.*sklearn.utils.parallel.*')
 
 
 class GestureTrainer:

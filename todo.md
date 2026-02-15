@@ -55,17 +55,19 @@ Implementation plan aligned with [prd.md](prd.md). Each phase builds on the prev
 
 ---
 
-## Phase 3: Sequence Detection (Week 3)
+## Phase 3: Sequence Detection (Week 3) ✅ COMPLETED
 
-- [ ] Implement sequence detector (FSM or sliding window) using ordered gestures.
-- [ ] Load sequences from `jutsus.json` (e.g. Fireball: Snake → Ram → Tiger).
-- [ ] Add time window (e.g. 3–5 s) for valid sequence; handle partial/cancel.
-- [ ] Integrate with hand-tracking pipeline: continuous gesture stream → sequence check.
-- [ ] Emit “jutsu detected” event when full sequence matches.
-- [ ] Add at least: Fireball, Water Dragon, Earth Wall, Summoning (per PRD table).
-- [ ] Optional: Shadow Clone (Ram → Snake → Tiger), Chidori (Ox → Rabbit → Monkey).
+- [x] Implement sequence detector (FSM or sliding window) using ordered gestures.
+- [x] Load sequences from `jutsus.json` (e.g. Fireball: Snake → Ram → Tiger).
+- [x] Add time window (e.g. 3–5 s) for valid sequence; handle partial/cancel.
+- [x] Integrate with hand-tracking pipeline: continuous gesture stream → sequence check.
+- [x] Emit "jutsu detected" event when full sequence matches.
+- [x] Add at least: Fireball, Water Dragon, Earth Wall, Summoning (per PRD table).
+- [x] Optional: Shadow Clone (Ram → Snake → Tiger), Chidori (Ox → Rabbit → Monkey).
 
-**Exit criteria:** Performing a full hand-sign sequence triggers a jutsu event.
+**Exit criteria:** ✅ Performing a full hand-sign sequence triggers a jutsu event.
+
+**See:** [PHASE3_GUIDE.md](PHASE3_GUIDE.md) for complete Phase 3 documentation.
 
 ---
 

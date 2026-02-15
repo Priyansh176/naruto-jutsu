@@ -1,0 +1,94 @@
+{
+  "jutsus": [
+    {
+      "id": 1,
+      "name": "Fire Style: Fireball Jutsu",
+      "japanese": "Katon: Gōkakyū no Jutsu",
+      "sequence": ["Snake", "Ram", "Tiger"],
+      "time_window": 5.0,
+      "description": "A massive fireball technique using fire chakra",
+      "effects": {
+        "sound": "fireball.wav",
+        "animation": "fireball_effect.png",
+        "color": [255, 100, 0],
+        "particle_type": "fire"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Shadow Clone Jutsu",
+      "japanese": "Kage Bunshin no Jutsu",
+      "sequence": ["Ram", "Snake", "Tiger"],
+      "time_window": 4.0,
+      "description": "Creates solid clones of the user",
+      "effects": {
+        "sound": "shadow_clone.wav",
+        "animation": "clone_smoke.png",
+        "color": [200, 200, 200],
+        "particle_type": "smoke"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Water Style: Water Dragon Jutsu",
+      "japanese": "Suiton: Suiryūdan no Jutsu",
+      "sequence": ["Tiger", "Snake", "Monkey", "Ram"],
+      "time_window": 6.0,
+      "description": "Summons a powerful water dragon",
+      "effects": {
+        "sound": "water_dragon.wav",
+        "animation": "water_dragon_effect.png",
+        "color": [0, 150, 255],
+        "particle_type": "water"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Earth Style: Earth Wall",
+      "japanese": "Doton: Doryūheki",
+      "sequence": ["Dog", "Boar", "Ram"],
+      "time_window": 4.0,
+      "description": "Creates a protective wall of earth",
+      "effects": {
+        "sound": "earth_wall.wav",
+        "animation": "earth_wall_effect.png",
+        "color": [139, 90, 43],
+        "particle_type": "earth"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Summoning Jutsu",
+      "japanese": "Kuchiyose no Jutsu",
+      "sequence": ["Boar", "Dog", "Bird", "Monkey", "Ram"],
+      "time_window": 7.0,
+      "description": "Summons a creature from another location",
+      "effects": {
+        "sound": "summoning.wav",
+        "animation": "summoning_smoke.png",
+        "color": [255, 255, 255],
+        "particle_type": "smoke"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Chidori",
+      "japanese": "Chidori",
+      "sequence": ["Ox", "Rabbit", "Monkey"],
+      "time_window": 4.0,
+      "description": "Lightning blade technique concentrated in the hand",
+      "effects": {
+        "sound": "chidori.wav",
+        "animation": "lightning_effect.png",
+        "color": [100, 200, 255],
+        "particle_type": "lightning"
+      }
+    }
+  ],
+  "settings": {
+    "default_time_window": 5.0,
+    "gesture_hold_time": 0.5,
+    "confidence_threshold": 0.7,
+    "reset_on_invalid": true
+  }
+}
