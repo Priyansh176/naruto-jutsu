@@ -53,11 +53,34 @@ class GestureTrainer:
                 status = "✓" if count >= 200 else "⚠"
                 print(f"  {status} {gesture}: {count}")
             
-            # Check for minimum samples
+            # Check for minimum samples and filter if needed
+            min_samples = gesture_counts.min()
+            
+            # Remove gestures with only 1 sample (can't be split)
+            gestures_to_remove = gesture_counts[gesture_counts < 2].index.tolist()
+            if gestures_to_remove:
+                print(f"\n⚠ Removing gestures with < 2 samples (can't split for train/test):")
+                for gesture in gestures_to_remove:
+                    print(f"    - {gesture}: {gesture_counts[gesture]} sample(s)")
+                    self.data = self.data[self.data['gesture_label'] != gesture]
+                print(f"\n✓ Remaining samples: {len(self.data)}")
+            
+            # Warn about low sample counts
+            gesture_counts = self.data['gesture_label'].value_counts()
             min_samples = gesture_counts.min()
             if min_samples < 50:
-                print(f"\n⚠ Warning: Some gestures have < 50 samples. "
-                      f"Recommendation: collect more data for better accuracy.")
+                print(f"\n⚠ Warning: Some gestures have < 50 samples (minimum: {min_samples}).")
+                print(f"   Recommendation: collect more data for better accuracy.")
+                print(f"   For stratified split, each gesture needs at least 5-10 samples.")
+            
+            # Check if we have enough data to train
+            if len(self.data) < 10:
+                print("\n✗ Error: Not enough training data. Need at least 10 samples total.")
+                return False
+            
+            if len(gesture_counts) < 2:
+                print("\n✗ Error: Need at least 2 different gestures to train a classifier.")
+                return False
             
             return True
         
@@ -81,10 +104,35 @@ class GestureTrainer:
         # Encode labels (convert gesture names to integers)
         y_encoded = self.label_encoder.fit_transform(y)
         
+        # Check sample distribution
+        unique, counts = np.unique(y_encoded, return_counts=True)
+        min_count = counts.min()
+        
+        # Adjust test_size if needed for small datasets
+        if min_count < 5:
+            print(f"\n⚠ Warning: Smallest class has only {min_count} samples.")
+            print(f"   Using stratify=None to avoid split errors.")
+            stratify_param = None
+        else:
+            stratify_param = y_encoded
+        
+        # Adjust test_size to ensure at least 1 sample in test for each class
+        min_test_size = 1 / min_count
+        if test_size < min_test_size:
+            test_size = min(0.3, min_test_size * 1.5)
+            print(f"   Adjusted test_size to {test_size:.2f} for small dataset")
+        
         # Split into train/test
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y_encoded, test_size=test_size, random_state=random_state, stratify=y_encoded
-        )
+        try:
+            self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+                X, y_encoded, test_size=test_size, random_state=random_state, stratify=stratify_param
+            )
+        except ValueError as e:
+            # If stratified split fails, fall back to non-stratified
+            print(f"\n⚠ Stratified split failed, using random split instead.")
+            self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+                X, y_encoded, test_size=test_size, random_state=random_state, stratify=None
+            )
         
         print(f"\n✓ Data split: {len(self.X_train)} training, {len(self.X_test)} testing")
         print(f"  Feature dimensions: {self.X_train.shape[1]}")
@@ -128,10 +176,24 @@ class GestureTrainer:
             print(f"⚠ Below target accuracy (≥ {target_accuracy * 100}%). "
                   f"Consider collecting more data or tuning hyperparameters.")
         
-        # Cross-validation score
-        print("\nPerforming 5-fold cross-validation...")
-        cv_scores = cross_val_score(self.model, self.X_train, self.y_train, cv=5)
-        print(f"Cross-validation accuracy: {cv_scores.mean() * 100:.2f}% (+/- {cv_scores.std() * 100:.2f}%)")
+        # Cross-validation score (only if we have enough samples)
+        unique_train_classes = len(np.unique(self.y_train))
+        if len(self.y_train) >= 10 and unique_train_classes >= 2:
+            try:
+                # Determine number of folds based on smallest class size
+                min_class_size = min(np.bincount(self.y_train))
+                n_folds = min(5, min_class_size)
+                
+                if n_folds >= 2:
+                    print(f"\nPerforming {n_folds}-fold cross-validation...")
+                    cv_scores = cross_val_score(self.model, self.X_train, self.y_train, cv=n_folds)
+                    print(f"Cross-validation accuracy: {cv_scores.mean() * 100:.2f}% (+/- {cv_scores.std() * 100:.2f}%)")
+                else:
+                    print("\n⚠ Skipping cross-validation (not enough samples per class)")
+            except Exception as e:
+                print(f"\n⚠ Cross-validation skipped: {e}")
+        else:
+            print("\n⚠ Skipping cross-validation (insufficient training data)")
         
         # Detailed classification report
         print("\nClassification Report:")
@@ -139,7 +201,8 @@ class GestureTrainer:
         print(classification_report(
             self.y_test, y_pred, 
             target_names=gesture_names,
-            digits=3
+            digits=3,
+            zero_division=0
         ))
         
         # Confusion matrix

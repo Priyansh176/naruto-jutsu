@@ -47,8 +47,9 @@ class HandTracker:
     def __init__(
         self,
         max_num_hands: int = 2,
-        min_detection_confidence: float = 0.7,
+        min_detection_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
+        model_complexity: int = 1,
     ):
         self.mp_hands = mp.solutions.hands
         self.mp_draw = mp.solutions.drawing_utils
@@ -57,6 +58,7 @@ class HandTracker:
             max_num_hands=max_num_hands,
             min_detection_confidence=min_detection_confidence,
             min_tracking_confidence=min_tracking_confidence,
+            model_complexity=model_complexity,
         )
         self._fps_start = None
         self._fps_frame_count = 0

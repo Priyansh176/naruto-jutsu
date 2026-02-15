@@ -41,7 +41,10 @@ class FeatureExtractor:
             right_landmarks: List of 21 (x, y, z) tuples for right hand (None if not detected)
         
         Returns:
-            Feature vector as numpy array (66 features for single hand features + inter-hand features)
+            Feature vector as numpy array (72 features total):
+            - 33 features from left hand
+            - 33 features from right hand
+            - 6 inter-hand features (3 distances + 3 relative positions)
         """
         features = []
         
@@ -73,12 +76,16 @@ class FeatureExtractor:
             index_dist = self._euclidean_distance(left_array[self.INDEX[-1]], right_array[self.INDEX[-1]])
             features.append(index_dist)
             
+            # Distance between left middle tip and right middle tip
+            middle_dist = self._euclidean_distance(left_array[self.MIDDLE[-1]], right_array[self.MIDDLE[-1]])
+            features.append(middle_dist)
+            
             # Relative position (x, y, z difference between wrists)
             wrist_diff = right_array[self.WRIST] - left_array[self.WRIST]
             features.extend(wrist_diff)  # 3 features (x, y, z)
         else:
             # No inter-hand features if either hand is missing
-            features.extend([0.0] * 6)  # 6 inter-hand features
+            features.extend([0.0] * 6)  # 6 inter-hand features (3 distances + 3 positions)
         
         return np.array(features, dtype=np.float32)
 

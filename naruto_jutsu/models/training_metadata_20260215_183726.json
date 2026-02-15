@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260215_183726",
+  "data_file": "P:\\Project - Jutsu\\naruto_jutsu\\data\\gesture_data_2hands_20260215_182307.csv",
+  "total_samples": 2450,
+  "training_samples": 1960,
+  "test_samples": 490,
+  "gestures": [
+    "Bird",
+    "Boar",
+    "Dog",
+    "Dragon",
+    "Horse",
+    "Monkey",
+    "Ox",
+    "Rabbit",
+    "Ram",
+    "Rat",
+    "Snake",
+    "Tiger"
+  ],
+  "test_accuracy": 0.9959183673469387,
+  "model_params": {
+    "n_estimators": 100,
+    "max_depth": 20
+  }
+}
