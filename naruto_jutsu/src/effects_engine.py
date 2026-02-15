@@ -334,11 +334,12 @@ class EffectsEngine:
             jutsu: Jutsu dictionary with effects
             extended_duration: Duration to show particles (default 3 seconds)
         """
-        # Play sound
-        self.play_jutsu_sound(jutsu)
+        # Play sound (if effects exist)
+        if 'effects' in jutsu:
+            self.play_jutsu_sound(jutsu)
         
         # Get effect color
-        color = tuple(reversed(jutsu['effects'].get('color', [255, 255, 255])))
+        color = tuple(reversed(jutsu.get('effects', {}).get('color', [255, 255, 255])))
         
         # Trigger screen flash
         self.trigger_screen_flash(color=color, duration=0.3)
@@ -350,7 +351,8 @@ class EffectsEngine:
             'duration': extended_duration  # Use extended duration (default 3s)
         })
         
-        print(f"✨ Triggered effects for: {jutsu['name']}")
+        jutsu_name = jutsu.get('name', 'Unknown Jutsu')
+        print(f"✨ Triggered effects for: {jutsu_name}")
     
     def draw_active_effects(self, frame: np.ndarray, center: Optional[tuple] = None) -> np.ndarray:
         """
