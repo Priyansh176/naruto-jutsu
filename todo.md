@@ -24,12 +24,12 @@ Implementation plan aligned with [prd.md](prd.md). Each phase builds on the prev
 
 ## Phase 1: Hand Tracking (Week 1)
 
-- [ ] Integrate MediaPipe Hands in a minimal script.
-- [ ] Capture webcam feed; detect and draw 21 hand landmarks.
-- [ ] Support up to 2 hands; expose landmark coordinates (x, y, z).
-- [ ] Extract finger states (open/closed, angles) from landmarks.
-- [ ] Measure FPS; target ≥ 15 FPS on laptop webcam.
-- [ ] Add simple UI (e.g. OpenCV window or Tkinter) showing camera + overlay.
+- [x] Integrate MediaPipe Hands in a minimal script.
+- [x] Capture webcam feed; detect and draw 21 hand landmarks.
+- [x] Support up to 2 hands; expose landmark coordinates (x, y, z).
+- [x] Extract finger states (open/closed, angles) from landmarks.
+- [x] Measure FPS; target ≥ 15 FPS on laptop webcam.
+- [x] Add simple UI (e.g. OpenCV window or Tkinter) showing camera + overlay.
 
 **Exit criteria:** Stable hand tracking with landmark overlay in real time.
 
